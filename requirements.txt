@@ -1,0 +1,9 @@
+numpy
+pandas
+datasets
+transformers
+torch
+nltk
+sentencepiece
+accelerate
+protobuf
