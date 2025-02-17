@@ -63,26 +63,30 @@ You can enter a **social media post**, and the model will return a **normalized 
 ## 📂 Project Structure
 ```
 t5_claim_normalization/
-│── data/                         # Directory for datasets
-│   ├── train-eng.csv             # Training dataset
-│   ├── dev-eng.csv               # Development dataset
-│   ├── test-eng.csv              # Testing dataset
+│── data/                          # Directory for datasets
+│   ├── train-eng.csv              # Training dataset
+│   ├── dev-eng.csv                # Development dataset
 │
-│── model/                        # Directory containing the trained model
+│── model/                         # Directory containing the trained model
 │   ├── added_tokens.json
 │   ├── config.json
 │   ├── generation_config.json
-│   ├── model_test.py             # Interactive testing script
-│   ├── model.safetensors         # Trained model weights
+│   ├── model_test.py              # Interactive testing script
+│   ├── model.safetensors          # Trained model weights
 │   ├── special_tokens_map.json
 │   ├── spiece.model
 │   ├── tokenizer_config.json
 │
-│── evaluate_meteor.py            # Evaluation script
-│── pyproject.toml                # Project metadata and dependencies
-│── README.md                     # Documentation
-│── requirements.txt              # List of required dependencies
-│── run_training.py               # Model training script
+│── t5_claim_normalization/        # Directory containing the scripts
+│   ├── __init__.py
+│   ├── evaluate_meteor.py
+│   ├── model_test.py
+│   ├── run_training.py             
+│
+│── pyproject.toml                 # Project metadata and dependencies
+│── README.md                      # Documentation
+│── requirements.txt               # List of required dependencies
+│── run_training.py                # Model training script
 ```
 
 ---
