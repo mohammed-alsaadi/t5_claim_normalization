@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "t5_claim_normalization"
 version = "0.1.0"
 description = "A T5-based claim normalization model for social media posts"
-authors = [{ "name" = "Hafid Elmoudden", "email" = "hafidelmoudden2003@gmail.com" }]
+authors = [{ "name" = "Mohammed Alsaadi", "email" = "msa1045@unh.edu" }]
 license = { text = "MIT" }
 readme = "README.md"
 dependencies = [
@@ -30,6 +30,6 @@ line-length = 88
 profile = "black"
 
 [project.scripts]
-train = "t5_claim_normalization.run_training:main"
+train = "t5_claim_normalization.run_training:cli"
 evaluate = "t5_claim_normalization.evaluate_meteor:main"
 test_model = "t5_claim_normalization.model_test:main"

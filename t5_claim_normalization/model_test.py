@@ -1,53 +1,51 @@
 import os
 import torch
+import argparse
 from pathlib import Path
 from transformers import T5ForConditionalGeneration, T5Tokenizer
 from peft import PeftModel
 
-# ✅ Define base path to all models
-BASE_DIR = Path("C:/Users/Hafid/Desktop/ML Assignment/t5_claim_normalization").resolve()
-
-# ✅ Define available models
-MODEL_OPTIONS = {
-    "1": {
-        "name": "T5-small (no prompt)",
-        "path": BASE_DIR / "base_models" / "model_small_no_prompt",
-        "is_peft": False,
-        "add_prompt": True
-    },
-    "2": {
-        "name": "T5-base (no prompt)",
-        "path": BASE_DIR / "base_models" / "model_base_manual_prompting",
-        "is_peft": False,
-        "add_prompt": True
-    },
-    "3": {
-        "name": "T5-small (prompt-tuned)",
-        "path": BASE_DIR / "prompt_tuned" / "t5_small_peft",
-        "is_peft": True,
-        "base": BASE_DIR / "base_models" / "model_small_no_prompt",
-        "add_prompt": False
-    },
-    "4": {
-        "name": "T5-base (prompt-tuned)",
-        "path": BASE_DIR / "prompt_tuned" / "t5_base_peft",
-        "is_peft": True,
-        "base": BASE_DIR / "base_models" / "model_base_manual_prompting",
-        "add_prompt": False
+def build_model_options(base_dir: Path):
+    return {
+        "1": {
+            "name": "T5-small (no prompt)",
+            "path": base_dir / "base_models" / "model_small_no_prompt",
+            "is_peft": False,
+            "add_prompt": True
+        },
+        "2": {
+            "name": "T5-base (no prompt)",
+            "path": base_dir / "base_models" / "model_base_manual_prompting",
+            "is_peft": False,
+            "add_prompt": True
+        },
+        "3": {
+            "name": "T5-small (prompt-tuned)",
+            "path": base_dir / "prompt_tuned" / "t5_small_peft",
+            "is_peft": True,
+            "base": base_dir / "base_models" / "model_small_no_prompt",
+            "add_prompt": False
+        },
+        "4": {
+            "name": "T5-base (prompt-tuned)",
+            "path": base_dir / "prompt_tuned" / "t5_base_peft",
+            "is_peft": True,
+            "base": base_dir / "base_models" / "model_base_manual_prompting",
+            "add_prompt": False
+        }
     }
-}
 
-def select_model():
+def select_model(model_options):
     print("🔍 Select a model to use:")
-    for key, value in MODEL_OPTIONS.items():
+    for key, value in model_options.items():
         print(f"  {key}. {value['name']}")
     choice = input("Enter model number (1-4): ").strip()
-    
-    if choice not in MODEL_OPTIONS:
+
+    if choice not in model_options:
         print("❌ Invalid choice. Exiting.")
         exit()
 
-    config = MODEL_OPTIONS[choice]
+    config = model_options[choice]
     model_path = str(config["path"].resolve().as_posix())
 
     print(f"\n✅ Loading: {config['name']}")
@@ -72,7 +70,18 @@ def generate_claim(post: str, model, tokenizer, add_prompt: bool) -> str:
     return tokenizer.decode(output[0], skip_special_tokens=True)
 
 def main():
-    model, tokenizer, add_prompt = select_model()
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--base_dir",
+        default=r"C:\Users\hamod\github repo\t5_claim_normalization",
+        help="Base directory containing model folders"
+    )
+    args = parser.parse_args()
+
+    base_dir = Path(args.base_dir).resolve()
+    model_options = build_model_options(base_dir)
+
+    model, tokenizer, add_prompt = select_model(model_options)
 
     print("\n🧪 Model test ready. Type 'exit' to quit.")
     while True:

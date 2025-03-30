@@ -1,3 +1,5 @@
+import argparse
+import os
 import torch
 import gc
 import pandas as pd
@@ -10,7 +12,19 @@ from transformers import (
     DataCollatorForSeq2Seq,
 )
 from t5_claim_normalization import TRAIN_CSV_PATH, ensure_datasets
+import requests
 
+def download_if_url(path_or_url, dest_path):
+    if path_or_url is None:
+        raise ValueError("Path or URL is None.")
+    if path_or_url.startswith("http://") or path_or_url.startswith("https://"):
+        print(f"Downloading dataset from {path_or_url}...")
+        response = requests.get(path_or_url)
+        with open(dest_path, "wb") as f:
+            f.write(response.content)
+        print(f"Saved to {dest_path}")
+        return dest_path
+    return path_or_url
 
 def preprocess_function(examples):
     prompt_text = "Normalize this claim: "
@@ -26,8 +40,8 @@ def preprocess_function(examples):
     return model_inputs
 
 
-def main():
-    ensure_datasets()
+def main(train_path=None, dev_path=None):
+    # ensure_datasets()
 
     torch.cuda.empty_cache()
     gc.collect()
@@ -36,11 +50,14 @@ def main():
     max_input_length = 32
     max_target_length = 32
 
-    train_csv_path = "data/train-eng.csv"
-    dev_csv_path = "data/dev-eng.csv"
+    train_file = download_if_url(train_path, "data/train.csv")
+    dev_file = download_if_url(dev_path, "data/dev.csv")
 
-    train_df = pd.read_csv(train_csv_path)
-    dev_df = pd.read_csv(dev_csv_path)
+    # train_csv_path = "data/train-eng.csv"
+    # dev_csv_path = "data/dev-eng.csv"
+
+    train_df = pd.read_csv(train_file)
+    dev_df = pd.read_csv(dev_file)
 
     train_dataset = Dataset.from_pandas(train_df)
     dev_dataset = Dataset.from_pandas(dev_df)
@@ -97,6 +114,21 @@ def main():
     model.save_pretrained(output_dir)
     tokenizer.save_pretrained(output_dir)
     print(f"Model and tokenizer saved to {output_dir}")
+def cli():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--train_path",
+        default="https://gitlab.com/checkthat_lab/clef2025-checkthat-lab/-/raw/main/task2/data/train/train-eng.csv",
+        help="Path or URL to training data",
+    )
+    parser.add_argument(
+        "--dev_path",
+        default="https://gitlab.com/checkthat_lab/clef2025-checkthat-lab/-/raw/main/task2/data/dev/dev-eng.csv",
+        help="Path or URL to dev data",
+    )
+    args = parser.parse_args()
+    main(args.train_path, args.dev_path)
 
 if __name__ == "__main__":
-    main()
+    cli()
+
