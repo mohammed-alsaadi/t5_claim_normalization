@@ -14,7 +14,7 @@ def build_model_options(base_dir: Path):
             "add_prompt": True
         },
         "2": {
-            "name": "T5-base (no prompt)",
+            "name": "T5-base (manual prompt)",
             "path": base_dir / "base_models" / "model_base_manual_prompting",
             "is_peft": False,
             "add_prompt": True
@@ -32,6 +32,13 @@ def build_model_options(base_dir: Path):
             "is_peft": True,
             "base": base_dir / "base_models" / "model_base_manual_prompting",
             "add_prompt": False
+        },
+        "5": {
+            "name": "T5-base (LoRA)",
+            "path": base_dir / "fine_tuned" / "t5_base_lora",
+            "is_peft": True,
+            "base": base_dir / "base_models" / "model_base_manual_prompting",
+            "add_prompt": False
         }
     }
 
@@ -39,7 +46,7 @@ def select_model(model_options):
     print("🔍 Select a model to use:")
     for key, value in model_options.items():
         print(f"  {key}. {value['name']}")
-    choice = input("Enter model number (1-4): ").strip()
+    choice = input("Enter model number (1-5): ").strip()
 
     if choice not in model_options:
         print("❌ Invalid choice. Exiting.")
